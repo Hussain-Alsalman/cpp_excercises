@@ -28,7 +28,7 @@ int main() {
 		}
 		mag--;
 	}
-	cout << output; 
+	cout << output << endl; 
 }
 
 string read_tens(int num){
