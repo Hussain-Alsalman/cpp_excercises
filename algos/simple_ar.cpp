@@ -5,17 +5,18 @@
 using namespace std;
 string read_tens(int num); 
 string read_digit(int num, bool teen_flag); 
-int cut_chunk(int num, int size, int chunk_num); 
+int cut_chunk(unsigned long long int num, int size, int chunk_num); 
 string read_chunk(int num); 
-int deter_mag(int num); 
+int deter_mag(unsigned long long int num); 
 string str_mag(int num, bool tens_flag);
 string read_twos(int mag);
-string wow(string read, bool single);
+string wow(string read, bool single, bool print,bool after);
 int main() {
 	 
-	int num; 
+	unsigned long long int num; 
 	int mag; 
 	int chunk_num;	
+	bool print_it;
 	string chunk; 
 	string output = "";
        	cout << "Enter a number you wish to covert to text: "; 
@@ -24,17 +25,17 @@ while(num != -1 ) {
 	mag = deter_mag(num);
 	while(mag > 0){
 		chunk_num = cut_chunk(num,3,mag-1);
+		print_it = cut_chunk(num,3,mag-2);
 		chunk = read_chunk(chunk_num);
-		if (chunk != "" ) {
+		if (chunk != "" || chunk_num != 0) {
 			if(chunk_num == 2){
-				output = output + read_twos(mag) + " ";
-		
+				output = output + read_twos(mag) +  "";	
 			}else if(chunk_num == 1 && mag != 1) {
-				output = output + wow(str_mag(mag,true),true) + " ";
+				output = output + wow(str_mag(mag,true),true,print_it,true) + "";
 			}else if(chunk_num >= 3 && chunk_num <=9 ) {
-				output = output + " " + chunk + " " + wow(str_mag(mag,false),true)+ " ";
-			}else{
-			output = output + chunk + " " + wow(str_mag(mag,true),true) + " ";
+				output = output + " " + chunk + " " + wow(str_mag(mag,false),true,print_it,true)+ "";
+			}else{ 
+			output = output + chunk + " " + wow(str_mag(mag,true),true,print_it,true) + "";
 			}
 		}else {
 			
@@ -122,13 +123,15 @@ if (teen_flag){
  }
 }
 
-int cut_chunk(int num, int size, int chunk_num){
-	
+int cut_chunk(unsigned long long int num, int size, int chunk_num){
+	if(chunk_num < 0) {
+	return 0;
+	}	
 	int result;
 	int denom = pow(10,size*(chunk_num));
-	int tmp_num;
+	unsigned long long int tmp_num;
 	tmp_num = num/denom;
-	int other=(tmp_num/pow(10,size)); 
+	unsigned long long int other=(tmp_num/pow(10,size)); 
 	result = tmp_num -other *pow(10,size);
 	return result;
 }
@@ -142,29 +145,29 @@ string read_chunk(int num) {
 	}else if (num >= 10 && num < 20) {
 		return read_digit(first_num,true);
 	}else if (num >= 20 && num < 100) {
-		return (wow(read_digit(first_num,false),true) + read_tens(second_num)) ; 
+		return (wow(read_digit(first_num,false),true,true,true) + read_tens(second_num)) ; 
 	
 	}else if(second_num == 1 ) {
 		if(third_num == 1) {
-			return (wow("مئة",true) + read_digit(first_num,true)); 
+			return (wow("مئة",true,true,true) + read_digit(first_num,true)); 
 		}else if (third_num == 2){	
-			return (wow(read_twos(0),true) + " و " + read_digit(first_num,false)); 	
+			return (wow(read_twos(0),true,true,true) +  read_digit(first_num,false)); 	
 		}else {
-			return(read_digit(third_num,false) + wow(" مئة ",true) + read_digit(first_num,true));
+			return(read_digit(third_num,false) + " مئة " + wow(read_digit(first_num,true),true,true,false));
 		}
 	}else {
 		if(third_num == 1) {
-			return ("مئة " + wow(read_digit(first_num,false),false) + read_tens(second_num));	
+			return ("مئة " + wow(read_digit(first_num,false),true,true,false) + wow(read_tens(second_num),true,true,false));	
 		}else if (third_num == 2){	
-			return (read_twos(0) + " " + wow(read_digit(first_num,false),false) + read_tens(second_num));	
+			return (read_twos(0)  + wow(read_digit(first_num,false),true,true,false) +wow(read_tens(second_num),true,true,false));	
 		}else {
-			return(read_digit(third_num,false) + " مئة " + wow(read_digit(first_num,false),false) + read_tens(second_num));
+			return(read_digit(third_num,false) + " مئة " + wow(read_digit(first_num,false),true,true,false) +wow(read_tens(second_num),true,true,false));
 		}
 	}	
 }
 
-int deter_mag(int num){
-int cond = -1; 
+int deter_mag(unsigned long long int num){
+unsigned long long int cond = -1; 
 int mag = 0; 
 
 for(int i = 0 ; cond != 0; i++) {
@@ -249,10 +252,13 @@ switch(num){
 	}
 }
 }
-string wow(string read, bool single) {
-	if (read != "") {
+string wow(string read, bool single=false, bool print=true,bool after=true) {
+	if (read != "" && print != false) {
 		if(single) {
-			return read + " و " ;
+			if(after) {
+			return read + " و " ;}
+			else {
+				return " و " + read;}
 		}else {	
 			return " و " + read + " و "; 
 		}
