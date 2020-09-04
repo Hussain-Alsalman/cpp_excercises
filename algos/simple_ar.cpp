@@ -27,15 +27,15 @@ while(num != -1 ) {
 		chunk_num = cut_chunk(num,3,mag-1);
 		print_it = cut_chunk(num,3,mag-2);
 		chunk = read_chunk(chunk_num);
-		if (chunk != "" || chunk_num != 0) {
-			if(chunk_num == 2){
-				output = output + read_twos(mag) +  "";	
+		if (chunk != "" && chunk_num > 0) {
+			if(chunk_num == 2 && num != 2) {
+				output = output + wow(read_twos(mag),true,print_it,true);	
 			}else if(chunk_num == 1 && mag != 1) {
-				output = output + wow(str_mag(mag,true),true,print_it,true) + "";
+				output = output + wow(str_mag(mag,true),true,print_it,true);
 			}else if(chunk_num >= 3 && chunk_num <=9 ) {
-				output = output + " " + chunk + " " + wow(str_mag(mag,false),true,print_it,true)+ "";
+				output = output + chunk + wow(str_mag(mag,false),true,print_it,true);
 			}else{ 
-			output = output + chunk + " " + wow(str_mag(mag,true),true,print_it,true) + "";
+			output = output + chunk + wow(str_mag(mag,true),true,print_it,true);
 			}
 		}else {
 			
@@ -45,6 +45,7 @@ while(num != -1 ) {
 	}
 	cout << output << endl; 
 	output = ""; }
+return 0;
 }
 
 string read_tens(int num){
@@ -141,7 +142,7 @@ string read_chunk(int num) {
 	int third_num = cut_chunk(num,1,2);	
 	
 	if (num <10) {
-		return read_digit(first_num,false);
+		return read_digit(first_num,false) + " ";
 	}else if (num >= 10 && num < 20) {
 		return read_digit(first_num,true);
 	}else if (num >= 20 && num < 100) {
@@ -151,7 +152,7 @@ string read_chunk(int num) {
 		if(third_num == 1) {
 			return (wow("مئة",true,true,true) + read_digit(first_num,true)); 
 		}else if (third_num == 2){	
-			return (wow(read_twos(0),true,true,true) +  read_digit(first_num,false)); 	
+			return (wow(read_twos(0),true,true,true) +  read_digit(first_num,true));
 		}else {
 			return(read_digit(third_num,false) + " مئة " + wow(read_digit(first_num,true),true,true,false));
 		}
@@ -258,7 +259,7 @@ string wow(string read, bool single=false, bool print=true,bool after=true) {
 			if(after) {
 			return read + " و " ;}
 			else {
-				return " و " + read;}
+				return " و " + read + " ";}
 		}else {	
 			return " و " + read + " و "; 
 		}
